@@ -12,7 +12,7 @@ services:
   # Backend Service
   backend:
     build:
-      context: ./backend
+      context: ./backend/payment_service
     container_name: keyshell-backend
     ports:
       - "5000:5000"
