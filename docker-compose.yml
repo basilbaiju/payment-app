@@ -3,7 +3,7 @@ services:
   frontend:
     build:
       context: ./frontend
-    container_name: keyshell-frontend
+    container_name: frontend
     ports:
       - "80:80"
     depends_on:
@@ -13,10 +13,10 @@ services:
   # Auth Service
   auth-service:
     build: ./backend/auth_service
-    container_name: keyshell-auth-service
+    container_name: auth-service
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/payment_app
-      - JWT_SECRET=your-secret-key
+      - JWT_SECRET=secret-key
     volumes:
       - ./backend/common:/app/common
     logging:
@@ -33,7 +33,7 @@ services:
   # Payment Service
   payment-service:
     build: ./backend/payment_service
-    container_name: keyshell-payment-service
+    container_name: payment-service
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/payment_app
       - ELASTICSEARCH_HOST=elasticsearch
@@ -54,7 +54,7 @@ services:
   # MongoDB Database
   mongodb:
     image: mongo:latest
-    container_name: keyshell-mongodb
+    container_name: mongodb
     ports:
       - "27017:27017"
     volumes:
@@ -65,7 +65,7 @@ services:
   # Redis for Caching
   redis:
     image: redis:latest
-    container_name: keyshell-redis
+    container_name: redis
     ports:
       - "6379:6379"
     networks:
@@ -74,7 +74,7 @@ services:
   # Elasticsearch
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
-    container_name: keyshell-elasticsearch
+    container_name: elasticsearch
     environment:
       - discovery.type=single-node
     ports:
