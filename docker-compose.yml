@@ -7,21 +7,49 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - backend
+      - auth-service
+      - payment-service
 
-  # Backend Service
-  backend:
-    build:
-      context: ./backend/payment_service
-    container_name: keyshell-backend
-    ports:
-      - "5000:5000"
+  # Auth Service
+  auth-service:
+    build: ./backend/auth_service
+    container_name: keyshell-auth-service
     environment:
-      - DATABASE_URL=mongodb://mongodb:27017/keyshell
-      - REDIS_URL=redis://redis:6379
+      - MONGODB_URI=mongodb://mongodb:27017/payment_app
+      - JWT_SECRET=your-secret-key
+    volumes:
+      - ./backend/common:/app/common
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     depends_on:
       - mongodb
+      - elasticsearch
+    networks:
+      - app-network
+
+  # Payment Service
+  payment-service:
+    build: ./backend/payment_service
+    container_name: keyshell-payment-service
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/payment_app
+      - ELASTICSEARCH_HOST=elasticsearch
+    volumes:
+      - ./backend/common:/app/common
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on:
+      - mongodb
+      - elasticsearch
       - redis
+    networks:
+      - app-network
 
   # MongoDB Database
   mongodb:
@@ -31,6 +59,8 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - app-network
 
   # Redis for Caching
   redis:
@@ -38,6 +68,22 @@ services:
     container_name: keyshell-redis
     ports:
       - "6379:6379"
+    networks:
+      - app-network
+
+  # Elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
+    container_name: keyshell-elasticsearch
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    networks:
+      - app-network
+
+networks:
+  app-network:
 
 volumes:
   mongodb_data:
