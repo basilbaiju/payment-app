@@ -1,22 +1,21 @@
-services:
-  # Frontend Service
-  frontend:
-    build:
-      context: ./frontend
-    container_name: frontend
-    ports:
-      - "80:80"
-    depends_on:
-      - auth-service
-      - payment-service
+# docker-compose.yml
+version: '3.8'
 
-  # Auth Service
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - app-network
+
   auth-service:
     build: ./backend/auth_service
-    container_name: auth-service
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/payment_app
-      - JWT_SECRET=secret-key
+      - JWT_SECRET=your-secret-key
     volumes:
       - ./backend/common:/app/common
     logging:
@@ -30,10 +29,8 @@ services:
     networks:
       - app-network
 
-  # Payment Service
   payment-service:
     build: ./backend/payment_service
-    container_name: payment-service
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/payment_app
       - ELASTICSEARCH_HOST=elasticsearch
@@ -48,42 +45,81 @@ services:
       - mongodb
       - elasticsearch
       - redis
+
     networks:
       - app-network
 
-  # MongoDB Database
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
+  frontend:
+    build: ./frontend
     ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
+      - "4200:80"
+    depends_on:
+      - auth-service
+      - payment-service
     networks:
       - app-network
 
-  # Redis for Caching
-  redis:
-    image: redis:latest
-    container_name: redis
+  nginx:
+    build: ./nginx
     ports:
-      - "6379:6379"
+      - "80:80"
+    depends_on:
+      - auth-service
+      - payment-service
+      - frontend
     networks:
       - app-network
 
-  # Elasticsearch
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
-    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
     environment:
       - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
       - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
       - app-network
 
-networks:
-  app-network:
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.9.3
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - app-network
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.9.3
+    volumes:
+      - ./elk/logstash/config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - logstash_data:/var/log/logstash
+    depends_on:
+      - elasticsearch
+    networks:
+      - app-network
+  
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+
+  
 
 volumes:
   mongodb_data:
+  elasticsearch_data:
+  logstash_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge
