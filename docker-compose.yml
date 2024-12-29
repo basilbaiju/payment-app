@@ -9,34 +9,24 @@ services:
       - app-network
 
   auth-service:
-    build: ./backend/auth_service
+    build:
+      context: ./backend/auth_service
     environment:
-      - MONGODB_URI=mongodb://mongodb:27017/payment_app
-      - JWT_SECRET=your-secret-key
+      MONGODB_URI: mongodb://mongodb:27017/payment_app
     volumes:
       - ./backend/common:/app/common
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
     depends_on:
       - mongodb
     networks:
       - app-network
 
   payment-service:
-    build: ./backend/payment_service
+    build:
+      context: ./backend/payment_service
     environment:
-      - MONGODB_URI=mongodb://mongodb:27017/payment_app
-      - ELASTICSEARCH_HOST=elasticsearch
+      MONGODB_URI: mongodb://mongodb:27017/payment_app
     volumes:
       - ./backend/common:/app/common
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
     depends_on:
       - mongodb
       - redis
@@ -44,7 +34,8 @@ services:
       - app-network
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
     ports:
       - "4200:80"
     depends_on:
@@ -54,7 +45,8 @@ services:
       - app-network
 
   nginx:
-    build: ./nginx
+    build:
+      context: ./nginx
     ports:
       - "80:80"
     depends_on:
@@ -63,7 +55,7 @@ services:
       - frontend
     networks:
       - app-network
- 
+
   redis:
     image: redis:latest
     ports:
@@ -72,7 +64,6 @@ services:
       - redis_data:/data
     networks:
       - app-network
-
 
 volumes:
   mongodb_data:
