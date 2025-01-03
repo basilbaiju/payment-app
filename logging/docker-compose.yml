@@ -19,6 +19,8 @@ services:
       - es_data:/usr/share/elasticsearch/data
     networks:
       - elk
+    restart: always  # Automatically restart on failure
+
 
   logstash:
     build:
