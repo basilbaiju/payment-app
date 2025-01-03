@@ -20,7 +20,7 @@ pipeline {
             }
         }
 
-        stage('SonarQube Scanning') {
+        /*stage('SonarQube Scanning') {
             steps {
                 script {
                     withSonarQubeEnv('sonar-scanner') { 
@@ -91,6 +91,16 @@ pipeline {
         stage('Deploy Application') {
             steps {
                 sh '''
+                docker-compose down || true
+                docker-compose up -d
+                '''
+            }
+        }*/
+
+        stage('Deploy Logging Stack') {
+            steps {
+                sh '''
+                cd logging
                 docker-compose down || true
                 docker-compose up -d
                 '''
