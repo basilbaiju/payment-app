@@ -1,3 +1,4 @@
+# logging/kibana/kibana.yml
 server.host: "0.0.0.0"
 server.port: 8888
 elasticsearch.hosts: ["http://elasticsearch:9200"]
