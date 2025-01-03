@@ -15,11 +15,10 @@ services:
     ports:
       - "9200:9200"  # Elasticsearch HTTP port
     volumes:
-      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml  # Read-only config file
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml  
       - es_data:/usr/share/elasticsearch/data
     networks:
       - elk
-    restart: always  # Automatically restart on failure
 
   logstash:
     build:
