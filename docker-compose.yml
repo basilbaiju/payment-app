@@ -1,45 +1,74 @@
-version: '3.8'
-
 services:
-  # Frontend Service
-  frontend:
-    build:
-      context: ./frontend
-    container_name: keyshell-frontend
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-
-  # Backend Service
-  backend:
-    build:
-      context: ./backend
-    container_name: keyshell-backend
-    ports:
-      - "5000:5000"
-    environment:
-      - DATABASE_URL=mongodb://mongodb:27017/keyshell
-      - REDIS_URL=redis://redis:6379
-    depends_on:
-      - mongodb
-      - redis
-
-  # MongoDB Database
   mongodb:
     image: mongo:latest
-    container_name: keyshell-mongodb
     ports:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - app-network
 
-  # Redis for Caching
+  auth-service:
+    build:
+      context: ./backend/auth_service
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/payment_app
+    volumes:
+      - ./backend/common:/app/common
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  payment-service:
+    build:
+      context: ./backend/payment_service
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/payment_app
+    volumes:
+      - ./backend/common:/app/common
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - auth-service
+      - payment-service
+    networks:
+      - app-network
+
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - auth-service
+      - payment-service
+      - frontend
+    networks:
+      - app-network
+
   redis:
     image: redis:latest
-    container_name: keyshell-redis
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
 
 volumes:
   mongodb_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge
