@@ -10,7 +10,7 @@ services:
     logging:
       driver: gelf
       options:
-        gelf-address: "udp://logstash:5044"  # Logstash service address
+        gelf-address: "udp://localhost:5044"  # Logstash service address
 
   auth-service:
     build:
@@ -26,7 +26,7 @@ services:
     logging:
       driver: gelf
       options:
-        gelf-address: "udp://logstash:5044"  
+        gelf-address: "udp://localhost:5044"  
 
   payment-service:
     build:
@@ -43,7 +43,7 @@ services:
     logging:
       driver: gelf
       options:
-        gelf-address: "udp://logstash:5044"  
+        gelf-address: "udp://localhost:5044"  
 
   frontend:
     build:
@@ -58,7 +58,7 @@ services:
     logging:
       driver: gelf
       options:
-        gelf-address: "udp://logstash:5044"  
+        gelf-address: "udp://localhost:5044"  
 
   nginx:
     build:
@@ -74,7 +74,7 @@ services:
     logging:
       driver: gelf
       options:
-        gelf-address: "udp://logstash:5044"  
+        gelf-address: "udp://localhost:5044"  
 
   redis:
     image: redis:latest
@@ -87,7 +87,7 @@ services:
     logging:
       driver: gelf
       options:
-        gelf-address: "udp://logstash:5044" 
+        gelf-address: "udp://localhost:5044" 
 
 
 volumes:
