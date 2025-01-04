@@ -55,6 +55,7 @@ services:
       - payment-service
     networks:
       - app-network
+      - elk
     logging:
       driver: gelf
       options:
@@ -97,4 +98,6 @@ volumes:
 networks:
   app-network:
     driver: bridge
-
+  
+  elk:
+    driver: bridge
