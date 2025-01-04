@@ -4,20 +4,20 @@ global:
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['localhost:9090']  # Prometheus monitoring itself
+      - targets: ['localhost:9090']  
 
   - job_name: 'auth-service'
     static_configs:
-      - targets: ['auth-service:8081']  # Replace 8081 with your auth-service metrics port
+      - targets: ['auth-service:8000']
 
   - job_name: 'payment-service'
     static_configs:
-      - targets: ['payment-service:8082']  # Replace 8082 with your payment-service metrics port
+      - targets: ['payment-service:8000']  
 
   - job_name: 'frontend'
     static_configs:
-      - targets: ['frontend:4200']  # If frontend exposes metrics, specify the port
+      - targets: ['frontend:4200']  
 
   - job_name: 'nginx'
     static_configs:
-      - targets: ['nginx:80']  # For nginx metrics, ensure it exposes metrics
+      - targets: ['nginx:80']  
