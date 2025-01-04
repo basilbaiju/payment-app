@@ -87,7 +87,18 @@ services:
     logging:
       driver: gelf
       options:
-        gelf-address: "udp://logstash:5044"  
+        gelf-address: "udp://logstash:5044" 
+
+
+  logstash:
+    build:
+      context: ./logstash
+    container_name: logstash
+    networks:
+      - app-network  # Ensure logstash is on the same network
+    ports:
+      - "5044:5044"  # Logstash input port for GELF
+      - "9600:9600" 
 
 volumes:
   mongodb_data:
