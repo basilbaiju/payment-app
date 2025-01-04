@@ -20,7 +20,7 @@ pipeline {
             }
         }
 
-        /*stage('SonarQube Scanning') {
+        stage('SonarQube Scanning') {
             steps {
                 script {
                     withSonarQubeEnv('sonar-scanner') { 
@@ -84,7 +84,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
 
 
 
