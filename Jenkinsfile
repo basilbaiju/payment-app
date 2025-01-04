@@ -84,18 +84,9 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
 
 
-
-        stage('Deploy Application') {
-            steps {
-                sh '''
-                docker-compose down || true
-                docker-compose up -d
-                '''
-            }
-        }
 
         stage('Deploy Logging Stack') {
             steps {
@@ -105,7 +96,16 @@ pipeline {
                 docker-compose up -d
                 '''
             }
-        }*/
+        }
+
+        stage('Deploy Application') {
+            steps {
+                sh '''
+                docker-compose down || true
+                docker-compose up -d
+                '''
+            }
+        }
 
         stage('Deploy Monitoring Stack') {
             steps {

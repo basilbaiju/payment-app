@@ -23,7 +23,6 @@ services:
       - mongodb
     networks:
       - app-network
-      - monitoring-network
     logging:
       driver: gelf
       options:
@@ -41,7 +40,6 @@ services:
       - redis
     networks:
       - app-network
-      - monitoring-network
     logging:
       driver: gelf
       options:
@@ -57,7 +55,6 @@ services:
       - payment-service
     networks:
       - app-network
-      - monitoring-network
     logging:
       driver: gelf
       options:
@@ -74,7 +71,6 @@ services:
       - frontend
     networks:
       - app-network
-      - monitoring-network
     logging:
       driver: gelf
       options:
@@ -100,6 +96,4 @@ volumes:
 networks:
   app-network:
     driver: bridge
-  monitoring-network:
-    external: false
 
