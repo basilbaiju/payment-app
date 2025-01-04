@@ -95,12 +95,22 @@ pipeline {
                 docker-compose up -d
                 '''
             }
-        }*/
+        }
 
         stage('Deploy Logging Stack') {
             steps {
                 sh '''
                 cd logging
+                docker-compose down || true
+                docker-compose up -d
+                '''
+            }
+        }*/
+
+        stage('Deploy Monitoring Stack') {
+            steps {
+                sh '''
+                cd monitoring
                 docker-compose down || true
                 docker-compose up -d
                 '''
