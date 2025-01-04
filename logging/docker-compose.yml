@@ -20,8 +20,11 @@ services:
       - es_data:/usr/share/elasticsearch/data
     networks:
       - elk
-    restart: always  
-
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 30s
+      retries: 5
 
   logstash:
     build:
@@ -37,8 +40,7 @@ services:
     depends_on:
       - elasticsearch
     networks:
-      - elk
-      - app-network
+      - app-network  # Only this network should be needed
     restart: always  
 
   kibana:
