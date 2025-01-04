@@ -59,7 +59,7 @@ services:
     logging:
       driver: gelf
       options:
-        gelf-address: "udp://logstash:5044"  
+        gelf-address: "udp://localhost:5044"  
 
   nginx:
     build:
