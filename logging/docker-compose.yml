@@ -41,7 +41,7 @@ services:
       - elasticsearch
     networks:
       - elk
-      - app-network  # Only this network should be needed
+      - app-network  
     restart: always  
 
   kibana:
