@@ -92,7 +92,7 @@ services:
 
   logstash:
     build:
-      context: ./logstash
+      context: ./logging/logstash
     container_name: logstash
     networks:
       - app-network  # Ensure logstash is on the same network
