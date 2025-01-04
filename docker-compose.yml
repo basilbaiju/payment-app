@@ -101,5 +101,5 @@ networks:
   app-network:
     driver: bridge
   monitoring-network:
-    external: true
+    external: false
 
